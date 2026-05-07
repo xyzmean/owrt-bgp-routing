@@ -250,47 +250,47 @@ add_peer() {
     _n="$1"
     printf "\n${BOLD}── Peer $((_n + 1)) ──${NC}\n"
 
-    _name=$(ask "Name (letters, digits, underscore)" "peer$((_n + 1))")
+    peer_name=$(ask "Name (letters, digits, underscore)" "peer$((_n + 1))")
     printf "\n"
-    validate_bird_name "$_name" || { err "Invalid peer name. Use only letters, digits, underscore."; return 1; }
-    _ip=$(ask "Peer IP address" "")
+    validate_bird_name "$peer_name" || { err "Invalid peer name. Use only letters, digits, underscore."; return 1; }
+    peer_ip=$(ask "Peer IP address" "")
     printf "\n"
-    require_ipv4 "$_ip" || { err "Peer IP must be valid IPv4"; return 1; }
-    _as=$(ask "Peer AS number" "")
+    require_ipv4 "$peer_ip" || { err "Peer IP must be valid IPv4"; return 1; }
+    peer_as=$(ask "Peer AS number" "")
     printf "\n"
-    require_uint "$_as" || { err "AS number must be numeric"; return 1; }
+    require_uint "$peer_as" || { err "AS number must be numeric"; return 1; }
 
-    _comm=""
+    peer_comm=""
     if ask_yesno "Filter by BGP communities?" "n"; then
         printf "  Format: AS:NN,AS:NN  (example: 65432:100,65432:200)\n"
-        _raw=$(ask "Communities" "")
+        peer_raw=$(ask "Communities" "")
         printf "\n"
-        if [ -n "$_raw" ]; then
-            _first=1
+        if [ -n "$peer_raw" ]; then
+            peer_first=1
             OLDIFS="$IFS"
             IFS=','
-            for c in $_raw; do
-                _a=$(echo "$c" | cut -d: -f1)
-                _nn=$(echo "$c" | cut -d: -f2)
-                require_uint "$_a" && require_uint "$_nn" || { IFS="$OLDIFS"; err "Community must be AS:NN numeric"; return 1; }
-                if [ "$_first" = 1 ]; then
-                    _comm="($_a, $_nn)"
-                    _first=0
+            for c in $peer_raw; do
+                peer_a=$(echo "$c" | cut -d: -f1)
+                peer_nn=$(echo "$c" | cut -d: -f2)
+                require_uint "$peer_a" && require_uint "$peer_nn" || { IFS="$OLDIFS"; err "Community must be AS:NN numeric"; return 1; }
+                if [ "$peer_first" = 1 ]; then
+                    peer_comm="($peer_a, $peer_nn)"
+                    peer_first=0
                 else
-                    _comm="$_comm, ($_a, $_nn)"
+                    peer_comm="$peer_comm, ($peer_a, $peer_nn)"
                 fi
             done
             IFS="$OLDIFS"
         fi
     fi
 
-    PEER_NAMES="${PEER_NAMES}${_name}
+    PEER_NAMES="${PEER_NAMES}${peer_name}
 "
-    PEER_IPS="${PEER_IPS}${_ip}
+    PEER_IPS="${PEER_IPS}${peer_ip}
 "
-    PEER_ASS="${PEER_ASS}${_as}
+    PEER_ASS="${PEER_ASS}${peer_as}
 "
-    PEER_COMMS="${PEER_COMMS}${_comm}
+    PEER_COMMS="${PEER_COMMS}${peer_comm}
 "
     TOTAL_PEERS=$((TOTAL_PEERS + 1))
 }
