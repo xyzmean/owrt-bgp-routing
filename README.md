@@ -30,7 +30,7 @@
 Загрузите и запустите на роутере:
 
 ```bash
-wget -O /tmp/bgp-setup.sh <URL> && sh /tmp/bgp-setup.sh
+sh <(wget -O - https://raw.githubusercontent.com/xyzmean/owrt-bgp-routing/main/owrt-bgp-routing-setup.sh)
 ```
 
 Скрипт задаст вопросы в интерактивном режиме:
